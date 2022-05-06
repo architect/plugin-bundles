@@ -1,8 +1,8 @@
 {
-  "name": "plugin-bundles",
+  "name": "@architect/plugin-bundles",
   "version": "1.0.0",
   "description": "plugin-bundles Plugin for exposing bundled modules to the browser from your Architect project.",
-  "main": "src/plugins/_bundles.js",
+  "main": "src/plugins/bundles/index.js",
   "engines": {
     "node": ">=14"
   },
@@ -11,7 +11,7 @@
   ],
   "scripts": {
     "lint": "eslint src test --fix",
-    "test": "npm run lint && tape test/test.js | tap-arc"
+    "test": "tape test/test.js"
   },
   "repository": {
     "type": "git",
