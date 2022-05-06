@@ -1,7 +1,0 @@
-{
-  "type": "module",
-  "devDependencies": {
-    "@architect/plugin-bundles": "file:../../../../"
-
-  }
-}

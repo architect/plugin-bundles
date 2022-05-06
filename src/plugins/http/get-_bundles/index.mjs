@@ -1,4 +1,4 @@
-import map from '@architect/bundles/_map.mjs'
+import map from '@architect/bundles/map.mjs'
 import fs from 'fs'
 import path from 'path'
 import url from 'url'

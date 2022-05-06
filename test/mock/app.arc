@@ -5,7 +5,7 @@ bndl-mock
 get /yolo
 
 @plugins
-plugin-bundles
+architect/plugin-bundles
   src ../../
 
 @bundles

@@ -3,13 +3,13 @@ const path = require('path')
 const crypto = require('crypto')
 const { build } = require('esbuild')
 const GET_BUNDLES = 'get-_bundles'
-const src = path.join(__dirname, '..', 'http', GET_BUNDLES)
+
 const set = {
-  http () {
+  http() {
     return {
       method: 'get',
       path: '/_bundles/*',
-      src
+      src: path.join(__dirname, '..', 'http', GET_BUNDLES)
     }
   }
 }
@@ -55,9 +55,10 @@ async function verify (arc) {
  * run esbuild to generate the @bundles code
  */
 async function bundle (arc, inventory) {
+  const bundlesSrc = inventory.http.find(i => i.name === 'get /_bundles/*').src
   // create @architect/bundles for browser usage
   const pathToBundles = path.join(
-    GET_BUNDLES,
+    bundlesSrc,
     'node_modules',
     '@architect',
     'bundles'
@@ -83,11 +84,8 @@ async function bundle (arc, inventory) {
     map += `  "/_bundles/${name}.mjs": "/_bundles/${name}-${hash}.mjs",\n`
   }
   map += '}'
-  // Copy to @architect/bundles/map.mjs
-  const pathToBrowserIndex = path.join(pathToBundles, `map.mjs`)
-  fs.writeFileSync(pathToBrowserIndex, map)
 
-  // Copy bundles map in to each lambda at @architect/bundles/index.mjs
+  //Copy bundles map in to each lambda at @architect/bundles/index.mjs
   for (let name of inventory.lambdaSrcDirs) {
     const lambda = inventory.lambdasBySrcDir[name]
     // Copy to all lambdas configured with @views pragma
