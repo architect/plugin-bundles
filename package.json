@@ -1,6 +1,6 @@
 {
   "name": "@architect/plugin-bundles",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "plugin-bundles Plugin for exposing bundled modules to the browser from your Architect project.",
   "main": "src/plugins/bundles/index.js",
   "engines": {
