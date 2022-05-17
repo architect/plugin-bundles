@@ -9,4 +9,4 @@ architect/plugin-bundles
   src ../../
 
 @bundles
-yolo /node_modules/yolo
+yolo /lib/yolo.mjs
