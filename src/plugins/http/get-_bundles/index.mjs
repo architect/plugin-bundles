@@ -8,8 +8,9 @@ const __dirname = path.dirname(url.fileURLToPath(import.meta.url))
 export async function handler (req) {
 
   const reverse = {}
-  for (let key in map)
+  for (let key in map) {
     reverse[map[key]] = key
+  }
 
   if (Object.keys(reverse).includes(req.rawPath) === false) {
     return {

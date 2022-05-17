@@ -85,7 +85,7 @@ async function bundle (arc, inventory) {
   }
   map += '}'
 
-  //Copy bundles map in to each lambda at @architect/bundles/index.mjs
+  // Copy bundles map in to each lambda at @architect/bundles/index.mjs
   for (let name of inventory.lambdaSrcDirs) {
     const lambda = inventory.lambdasBySrcDir[name]
     // Copy to all lambdas configured with @views pragma
