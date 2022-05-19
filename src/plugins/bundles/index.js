@@ -84,25 +84,7 @@ async function bundle (arc, inventory) {
   }
   map += '}'
 
-  // Copy bundles map in to each lambda at @architect/bundles/index.mjs
-  for (let name of inventory.lambdaSrcDirs) {
-    const lambda = inventory.lambdasBySrcDir[name]
-    // Copy to all lambdas configured with @views pragma
-    if (lambda.method && lambda.method.toLowerCase() === 'get') {
-      // create @architect/views/_bundles/${lambda.src}
-      const pathToImportMap = path.join(
-        lambda.src,
-        'node_modules',
-        '@architect',
-        'views',
-        '_bundles'
-      )
-      fs.mkdirSync(pathToImportMap, { recursive: true })
-      // Copy map to @architect/views/_bundles/map.mjs
-      const pathToBrowserIndex = path.join(pathToImportMap, `map.mjs`)
-      fs.writeFileSync(pathToBrowserIndex, map)
-    }
-  }
+  fs.writeFileSync(path.join(pathToBundles, 'map.mjs'), map)
 }
 
 module.exports = { set, sandbox, deploy }
