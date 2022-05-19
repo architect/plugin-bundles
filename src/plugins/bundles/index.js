@@ -55,13 +55,12 @@ async function verify (arc) {
  * run esbuild to generate the @bundles code
  */
 async function bundle (arc, inventory) {
-  const bundlesSrc = inventory.http.find(i => i.name === 'get /_bundles/*').src
-  // create @architect/bundles for browser usage
+  // create @architect/views/_bundles for browser usage
   const pathToBundles = path.join(
-    bundlesSrc,
-    'node_modules',
-    '@architect',
-    'bundles'
+    inventory._project.cwd,
+    'src',
+    'views',
+    '_bundles'
   )
   fs.mkdirSync(pathToBundles, { recursive: true })
 
@@ -90,15 +89,16 @@ async function bundle (arc, inventory) {
     const lambda = inventory.lambdasBySrcDir[name]
     // Copy to all lambdas configured with @views pragma
     if (lambda.method && lambda.method.toLowerCase() === 'get') {
-      // create @architect/bundles/${lambda.src}
+      // create @architect/views/_bundles/${lambda.src}
       const pathToImportMap = path.join(
         lambda.src,
         'node_modules',
         '@architect',
-        'bundles'
+        'views',
+        '_bundles'
       )
       fs.mkdirSync(pathToImportMap, { recursive: true })
-      // Copy map to @architect/bundles/map.mjs
+      // Copy map to @architect/views/_bundles/map.mjs
       const pathToBrowserIndex = path.join(pathToImportMap, `map.mjs`)
       fs.writeFileSync(pathToBrowserIndex, map)
     }

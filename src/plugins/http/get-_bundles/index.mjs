@@ -1,4 +1,4 @@
-import map from '@architect/bundles/map.mjs'
+import map from '@architect/views/_bundles/map.mjs'
 import fs from 'fs'
 import path from 'path'
 import url from 'url'
@@ -19,7 +19,7 @@ export async function handler (req) {
     }
   }
 
-  const base = path.join(__dirname, 'node_modules', '@architect', 'bundles')
+  const base = path.join(__dirname, 'node_modules', '@architect', 'views', '_bundles')
   const pathToFile = path.join(base, reverse[req.rawPath].split('/').pop())
   return {
     statusCode: 200,
