@@ -29,7 +29,7 @@ yolo /lib/yolo.mjs
 In your lambda handler you now have access to a map with the path to bundled and fingerprinted modules
 
 ``` javascript
-import map from '@architect/views/_bundles/map.mjs'`
+import map from '@architect/bundles/map.mjs'`
 ```
 Map will look like this
 ``` javascript
@@ -42,7 +42,7 @@ In your browser code you can now request modules from  `/_bundles/` and the resp
 
 You can use the map to look up the fingerprinted name.
 ``` javascript
-import map from '@architect/views/_bundles/map.mjs'`
+import map from '@architect/bundles/map.mjs'`
 const fingerprintedPath = map['/_bundles/yolo.mjs'] 
 // fingerprintedPath would be: /_bundles/yolo-232bd6a.mjs
 ```

@@ -1,4 +1,4 @@
-import map from '@architect/views/_bundles/map.mjs'
+import map from '@architect/bundles/map.mjs'
 
 export async function handler () {
   return {

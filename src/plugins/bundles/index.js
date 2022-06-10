@@ -55,12 +55,12 @@ async function verify (arc) {
  * run esbuild to generate the @bundles code
  */
 async function bundle (arc, inventory) {
-  // create @architect/views/_bundles for browser usage
+  const bundlesSrc = inventory.http.find(i => i.name === 'get /_bundles/*').src
   const pathToBundles = path.join(
-    inventory._project.cwd,
-    'src',
-    'views',
-    '_bundles'
+    bundlesSrc,
+    'node_modules',
+    '@architect',
+    'bundles'
   )
   fs.mkdirSync(pathToBundles, { recursive: true })
 
@@ -84,7 +84,20 @@ async function bundle (arc, inventory) {
   }
   map += '}'
 
-  fs.writeFileSync(path.join(pathToBundles, 'map.mjs'), map)
+  for (let name of inventory.lambdaSrcDirs) {
+    const lambda = inventory.lambdasBySrcDir[name]
+    if (lambda.method && lambda.method.toLowerCase() === 'get') {
+      const pathToLambdaBundles = path.join(
+        lambda.src,
+        'node_modules',
+        '@architect',
+        'bundles'
+      )
+      fs.mkdirSync(pathToLambdaBundles, { recursive: true })
+      const pathToBrowserIndex = path.join(pathToLambdaBundles, `map.mjs`)
+      fs.writeFileSync(pathToBrowserIndex, map)
+    }
+  }
 }
 
 module.exports = { set, sandbox, deploy }
