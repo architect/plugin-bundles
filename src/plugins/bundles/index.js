@@ -1,18 +1,5 @@
-const fs = require('fs')
 const path = require('path')
-const crypto = require('crypto')
 const { build } = require('esbuild')
-const GET_BUNDLES = 'get-_bundles'
-
-const set = {
-  http() {
-    return {
-      method: 'get',
-      path: '/_bundles/*',
-      src: path.join(__dirname, '..', 'http', GET_BUNDLES)
-    }
-  }
-}
 
 const sandbox = {
   async start ({ arc, inventory }) {
@@ -55,49 +42,18 @@ async function verify (arc) {
  * run esbuild to generate the @bundles code
  */
 async function bundle (arc, inventory) {
-  const bundlesSrc = inventory.http.find(i => i.name === 'get /_bundles/*').src
-  const pathToBundles = path.join(
-    bundlesSrc,
-    'node_modules',
-    '@architect',
-    'bundles'
-  )
-  fs.mkdirSync(pathToBundles, { recursive: true })
-
+  const pathToStatic = process.env.ARC_STATIC_BUCKET
   for (let [ name, pathToFile ] of arc.bundles) {
     let entry = path.join(inventory._project.cwd, pathToFile)
     await build({
       entryPoints: [ entry ],
       bundle: true,
       format: 'esm',
-      outfile: path.join(pathToBundles, `${name}.mjs`),
+      target: [ 'esnext' ],
+      platform: 'browser',
+      outfile: path.join(pathToStatic, `${name}.mjs`),
     })
-  }
-
-  // generate map
-  let map = 'export default {\n'
-  for (let [ name ] of arc.bundles) {
-    let pathToBrowserFile = path.join(pathToBundles, `${name}.mjs`)
-    let raw = fs.readFileSync(pathToBrowserFile).toString()
-    let hash = crypto.createHash('md5').update(raw).digest('hex').substring(0, 7)
-    map += `  "/_bundles/${name}.mjs": "/_bundles/${name}-${hash}.mjs",\n`
-  }
-  map += '}'
-
-  for (let name of inventory.lambdaSrcDirs) {
-    const lambda = inventory.lambdasBySrcDir[name]
-    if (lambda.method && lambda.method.toLowerCase() === 'get') {
-      const pathToLambdaBundles = path.join(
-        lambda.src,
-        'node_modules',
-        '@architect',
-        'bundles'
-      )
-      fs.mkdirSync(pathToLambdaBundles, { recursive: true })
-      const pathToBrowserIndex = path.join(pathToLambdaBundles, `map.mjs`)
-      fs.writeFileSync(pathToBrowserIndex, map)
-    }
   }
 }
 
-module.exports = { set, sandbox, deploy }
+module.exports = { sandbox, deploy }

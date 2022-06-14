@@ -1,8 +1,11 @@
 @app
 bndl-mock
 
+@static
+fingerprint true
+
 @http
-get /yolo
+get /
 
 @plugins
 architect/plugin-bundles
