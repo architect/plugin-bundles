@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/architect/plugin-bundles#readme",
   "dependencies": {
+    "@architect/functions": "^5.1.0",
     "esbuild": "^0.14.38"
   },
   "devDependencies": {

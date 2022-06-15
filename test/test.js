@@ -1,4 +1,5 @@
 const { join } = require('path')
+const { unlinkSync, rmdirSync } = require('fs')
 const test = require('tape')
 const { get } = require('tiny-json-http')
 const sandbox = require('@architect/sandbox')
@@ -15,28 +16,22 @@ test('Start sandbox', async t => {
   t.pass('Sandbox started')
 })
 
-test('Verify map', async t => {
-  t.plan(1)
-  const res = await get({
-    url: url('/yolo', port),
-    port
-  })
-  t.ok(res, `Map was generated ${JSON.stringify(res.body.json, null, 2)}`)
-})
-
 test('Get file via fingerprinted url', async t => {
   t.plan(1)
-  const mapRes = await get({
-    url: url('/yolo', port),
+  const fileReq = await get({
+    url: url('/', port),
     port
   })
-  const _map = mapRes.body.json
-  const fingerprintedPath = _map[Object.keys(_map)[0]]
-  const res = await get({
-    url: url(fingerprintedPath, port),
-    port
-  })
-  t.ok(res, `Got file via fingerprinted url ${fingerprintedPath}` )
+  const filePath = fileReq.body
+  t.ok(filePath, `Got fingerprinted url ${filePath}` )
+})
+
+test('cleanup', t => {
+  t.plan(1)
+  unlinkSync(join(workingDirectory, 'public', 'bundles', 'yolo.mjs'))
+  unlinkSync(join(workingDirectory, 'public', '.gitignore'))
+  rmdirSync(join(workingDirectory, 'public', 'bundles'))
+  t.pass('Tests files cleaned up')
 })
 
 test('Shut down Sandbox', async t => {
