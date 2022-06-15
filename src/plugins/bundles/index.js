@@ -1,5 +1,6 @@
 const path = require('path')
 const { build } = require('esbuild')
+const fs = require('fs')
 
 const sandbox = {
   async start ({ arc, inventory }) {
@@ -43,6 +44,7 @@ async function verify (arc) {
  */
 async function bundle (arc, inventory) {
   const pathToStatic = process.env.ARC_STATIC_BUCKET
+  const pathToStaticBundles = path.join(pathToStatic, 'bundles')
   for (let [ name, pathToFile ] of arc.bundles) {
     let entry = path.join(inventory._project.cwd, pathToFile)
     await build({
@@ -51,9 +53,13 @@ async function bundle (arc, inventory) {
       format: 'esm',
       target: [ 'esnext' ],
       platform: 'browser',
-      outfile: path.join(pathToStatic, `${name}.mjs`),
+      outfile: path.join(pathToStaticBundles, `${name}.mjs`),
     })
   }
+  fs.writeFileSync(
+    path.join(pathToStatic, '.gitignore'),
+    'bundles'
+  )
 }
 
 module.exports = { sandbox, deploy }
