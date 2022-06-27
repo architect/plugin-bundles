@@ -53,6 +53,7 @@ async function bundle (arc, inventory) {
       format: 'esm',
       target: [ 'esnext' ],
       platform: 'browser',
+      external: [ 'fs', 'path' ],
       outfile: path.join(pathToStaticBundles, `${name}.mjs`),
     })
   }
