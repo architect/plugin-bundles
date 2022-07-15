@@ -57,11 +57,9 @@ async function bundle (arc, inventory) {
     })
 
     const js = bundled.output[0].code
-
-    fs.writeFileSync(
-      path.join(pathToStaticBundles, `${name}.mjs`),
-      js
-    )
+    const file = path.join(pathToStaticBundles, `${name}.mjs`)
+    fs.mkdirSync(pathToStaticBundles, { recursive: true })
+    fs.writeFileSync(file, js)
   }
 
   fs.writeFileSync(
