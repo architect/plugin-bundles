@@ -1,5 +1,5 @@
 const path = require('path')
-const { build } = require('esbuild')
+const rollup = require('rollup')
 const fs = require('fs')
 
 const sandbox = {
@@ -47,16 +47,23 @@ async function bundle (arc, inventory) {
   const pathToStaticBundles = path.join(pathToStatic, 'bundles')
   for (let [ name, pathToFile ] of arc.bundles) {
     let entry = path.join(inventory._project.cwd, pathToFile)
-    await build({
-      entryPoints: [ entry ],
-      bundle: true,
-      format: 'esm',
-      target: [ 'esnext' ],
-      platform: 'browser',
-      external: [ 'fs', 'path' ],
-      outfile: path.join(pathToStaticBundles, `${name}.mjs`),
+    // generate bundle
+    const bundle = await rollup.rollup({
+      input: entry
     })
+
+    const bundled = await bundle.generate({
+      format: 'esm'
+    })
+
+    const js = bundled.output[0].code
+
+    fs.writeFileSync(
+      path.join(pathToStaticBundles, `${name}.mjs`),
+      js
+    )
   }
+
   fs.writeFileSync(
     path.join(pathToStatic, '.gitignore'),
     'bundles'
