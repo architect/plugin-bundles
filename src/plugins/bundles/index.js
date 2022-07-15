@@ -43,7 +43,7 @@ async function verify (arc) {
  * run esbuild to generate the @bundles code
  */
 async function bundle (arc, inventory) {
-  const pathToStatic = process.env.ARC_STATIC_BUCKET
+  const pathToStatic = path.join(inventory._project.cwd, inventory?.static?.folder || 'public')
   const pathToStaticBundles = path.join(pathToStatic, 'bundles')
   for (let [ name, pathToFile ] of arc.bundles) {
     let entry = path.join(inventory._project.cwd, pathToFile)
