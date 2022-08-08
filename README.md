@@ -24,25 +24,7 @@ architect/plugin-bundles
 # . Hint: You can include organization node modules by quoting the path
 # . i.e. hashids "@begin/hashids"
 yolo /lib/yolo.mjs
-``` 
+``
 
-In your lambda handler you now have access to a map with the path to bundled and fingerprinted modules
-
-``` javascript
-import map from '@architect/bundles/map.mjs'`
-```
-Map will look like this
-``` javascript
-export default {
-  "/_bundles/yolo.mjs": "/_bundles/yolo-232bd6a.mjs",
-}
-````
-
-In your browser code you can now request modules from  `/_bundles/` and the response will be the bundled and fingerprinted file.
-
-You can use the map to look up the fingerprinted name.
-``` javascript
-import map from '@architect/bundles/map.mjs'`
-const fingerprintedPath = map['/_bundles/yolo.mjs'] 
-// fingerprintedPath would be: /_bundles/yolo-232bd6a.mjs
-```
+Bundles are will now be available at `/_static/bundles/yolo.mjs`
+[If you have fingerprinting turned on then you can use `static.json` to look up the fingerprinted file name.](https://arc.codes/docs/en/guides/frontend/static-assets#fingerprint)
