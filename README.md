@@ -27,4 +27,5 @@ yolo /lib/yolo.mjs
 ```
 
 Bundles are will now be available at `/_static/bundles/yolo.mjs`
-[If you have fingerprinting turned on then you can use `static.json` to look up the fingerprinted file name.](https://arc.codes/docs/en/guides/frontend/static-assets#fingerprint)
+
+>  🙌 [Turn fingerprinting on and use `static.json` to retrieve the fingerprinted file name.](https://arc.codes/docs/en/guides/frontend/static-assets#fingerprint)
