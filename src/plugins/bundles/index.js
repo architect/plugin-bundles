@@ -1,6 +1,5 @@
 const path = require('path')
 const { build } = require('esbuild')
-const fs = require('fs')
 
 const sandbox = {
   async start ({ arc, inventory }) {
@@ -21,8 +20,7 @@ const deploy = {
  * verify the @bundles is valid
  */
 async function verify (arc) {
-  if (Array.isArray(arc.bundles) === false)
-    throw Error('missing or invalid @bundles pragma')
+  if (!arc.bundles) return
   for (let tuple of arc.bundles) {
     if (Array.isArray(tuple)) {
       // check the key is a valid identifier string and the value is a string that resolves to a file
@@ -43,6 +41,7 @@ async function verify (arc) {
  * run esbuild to generate the @bundles code
  */
 async function bundle (arc, inventory) {
+  if (!arc.bundles) return
   const pathToStatic = path.join(inventory._project.cwd, inventory?.static?.folder || 'public')
   const pathToStaticBundles = path.join(pathToStatic, 'bundles')
   for (let [ name, pathToFile ] of arc.bundles) {
@@ -57,10 +56,6 @@ async function bundle (arc, inventory) {
       outfile: path.join(pathToStaticBundles, `${name}.mjs`),
     })
   }
-  fs.writeFileSync(
-    path.join(pathToStatic, '.gitignore'),
-    'bundles'
-  )
 }
 
 module.exports = { sandbox, deploy }
