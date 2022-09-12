@@ -10,11 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Sandbox watcher
+- user-land esbuild config loaded from ./esbuild.config.js
 - Logging output
 
 ### Changed
 
 - internal file structure
-- don't include fs and path externals in builds
+- slimmer esbuild defaults in favor of user config
 
 ## [3.0.5] - 2022-09-10

@@ -21,7 +21,7 @@ test('Start sandbox', async t => {
 })
 
 test('Get finerprinted URL for assets', async t => {
-  const assetNames = [ 'yolo', 'some-ts' ]
+  const assetNames = [ 'yolo', 'some-ts', 'node-internals' ]
 
   t.plan(assetNames.length)
 

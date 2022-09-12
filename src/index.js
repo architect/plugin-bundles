@@ -1,3 +1,4 @@
+const { existsSync } = require('fs')
 const { join } = require('path')
 const { build: esbuild } = require('esbuild')
 
@@ -5,8 +6,9 @@ const { build: esbuild } = require('esbuild')
  * @typedef BundlesConfig
  * @property {string} [outDir] the bundles destination
  * @property {Array<string>} paths list of source paths
- * @property {object} pathToName source path to out name (w/o extension)
- * @property {object} nameToPath source path to out name (w/o extension)
+ * @property {object} pathToName source path to output name (w/o extension)
+ * @property {object} nameToPath output name to source path (w/o extension)
+ * @property {object} esbuildConfig
  */
 
 /** @type {BundlesConfig} */
@@ -14,6 +16,7 @@ const config = {
   paths: [],
   pathToName: {},
   nameToPath: {},
+  esbuildConfig: {},
 }
 
 async function createConfig (arc, inventory) {
@@ -22,6 +25,12 @@ async function createConfig (arc, inventory) {
   const cwd = inventory._project.cwd
 
   if (!entries) { return }
+
+  const configPath = join(cwd, 'esbuild.config.js')
+  if (existsSync(configPath)) {
+    // eslint-disable-next-line global-require
+    config.esbuildConfig = require(configPath)
+  }
 
   config.outDir = join(
     cwd,
@@ -54,28 +63,24 @@ async function createConfig (arc, inventory) {
 
 async function build (entryPoints) {
   await esbuild({
-    entryPoints,
-    outdir: config.outDir,
     bundle: true,
-    minify: true,
-    sourcemap: true,
     format: 'esm',
     target: 'es2022',
     platform: 'browser',
-    outExtension: { '.js': '.mjs' }
-    // external: [ 'fs', 'path' ],
+    outExtension: { '.js': '.mjs' },
+    ...config.esbuildConfig, // user config
+    entryPoints, // do not allow entryPoints and outdir override
+    outdir: config.outDir,
   })
-
-  const entryNames = Object.keys(entryPoints)
-  const plural = entryNames.length > 1 ? 's' : ''
-
-  console.log(`  @bundles: built ${entryNames.length} file${plural}.`)
 }
 
 async function buildAll () {
   if (!config.outDir) { return }
 
   await build(config.nameToPath)
+
+  const plural = config.paths.length > 1 ? 's' : ''
+  console.log(`  @bundles: built ${config.paths.length} file${plural}.`)
 }
 
 module.exports = {
@@ -91,6 +96,7 @@ module.exports = {
           && config.paths.includes(path)
       ){
         await build({ [config.pathToName[path]]: path })
+        console.log(`  @bundles: rebuilt "${path.split('/').pop()}"`)
       }
     }
   },

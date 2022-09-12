@@ -14,3 +14,4 @@ architect/plugin-bundles
 @bundles
 yolo /lib/yolo.mjs
 some-ts /lib/some.ts
+node-internals /lib/node-things.js
