@@ -5,8 +5,8 @@ const { build: esbuild } = require('esbuild')
  * @typedef BundlesConfig
  * @property {string} [outDir] the bundles destination
  * @property {Array<string>} paths list of source paths
- * @property {object} pathToName source path to out name (w/o extenstion)
- * @property {object} nameToPath source path to out name (w/o extenstion)
+ * @property {object} pathToName source path to out name (w/o extension)
+ * @property {object} nameToPath source path to out name (w/o extension)
  */
 
 /** @type {BundlesConfig} */
