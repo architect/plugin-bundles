@@ -2,7 +2,7 @@
   "name": "@architect/plugin-bundles",
   "version": "3.0.5",
   "description": "plugin-bundles Plugin for exposing bundled modules to the browser from your Architect project.",
-  "main": "src/plugins/bundles/index.js",
+  "main": "src/index.js",
   "engines": {
     "node": ">=14"
   },
@@ -11,7 +11,7 @@
   ],
   "scripts": {
     "lint": "eslint src test --fix",
-    "test": "tape test/test.js"
+    "test": "tape test/test.js | tap-arc"
   },
   "repository": {
     "type": "git",
@@ -25,15 +25,15 @@
   },
   "homepage": "https://github.com/architect/plugin-bundles#readme",
   "dependencies": {
-    "@architect/functions": "^5.1.0",
-    "esbuild": "^0.14.38"
+    "esbuild": "^0.15.7"
   },
   "devDependencies": {
     "@architect/eslint-config": "^2.0.1",
-    "@architect/sandbox": "^5.2.4",
-    "eslint": "^8.14.0",
-    "tap-arc": "^0.3.4",
-    "tape": "^5.5.3",
+    "@architect/functions": "^5.2.2",
+    "@architect/sandbox": "^5.3.4",
+    "eslint": "^8.23.0",
+    "tap-arc": "^0.3.5",
+    "tape": "^5.6.0",
     "tiny-json-http": "^7.4.2"
   },
   "eslintConfig": {

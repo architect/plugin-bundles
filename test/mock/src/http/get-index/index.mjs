@@ -1,12 +1,8 @@
 import arc from '@architect/functions'
 
-export async function handler (req) {
-  const filePath = arc.static('yolo.mjs')
-  return {
-    statusCode: 200,
-    headers: {
-      'Content-Type': 'text/html',
-    },
-    body: filePath
-  }
-}
+export const handler = arc.http.async(async function(request) {
+  const file = request.query.filePath
+  const filePath = arc.static(file)
+
+  return { filePath }
+})
