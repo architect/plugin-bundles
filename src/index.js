@@ -4,23 +4,30 @@ const { build: esbuild } = require('esbuild')
 /**
  * @typedef BundlesConfig
  * @property {string} [outDir] the bundles destination
- * @property {Array<[string, string]>} entries modified config with full source paths
  * @property {Array<string>} paths list of source paths
- * @property {object} lookup source path to out name (w/o extenstion)
+ * @property {object} pathToName source path to out name (w/o extenstion)
+ * @property {object} nameToPath source path to out name (w/o extenstion)
  */
 
 /** @type {BundlesConfig} */
 const config = {
-  entries: [],
   paths: [],
-  lookup: {},
+  pathToName: {},
+  nameToPath: {},
 }
 
-async function readConfig (arc, inventory) {
+async function createConfig (arc, inventory) {
   /** @type {[[string, string]]} */
   const entries = arc.bundles
+  const cwd = inventory._project.cwd
 
   if (!entries) { return }
+
+  config.outDir = join(
+    cwd,
+    inventory.static?.folder || 'public',
+    'bundles',
+  )
 
   for (const entry of entries) {
     if (Array.isArray(entry) && entry.length === 2) {
@@ -33,65 +40,63 @@ async function readConfig (arc, inventory) {
         console.warn(`  @bundles: invalid input path for "${name}": "${path}". Skipping.`)
       }
       else {
-        const fullPath = join(inventory._project.cwd, path)
-        config.entries.push([ name, fullPath ])
-        config.paths.push(fullPath)
-        config.lookup[fullPath] = name
+        const inputPath = join(cwd, path)
+        config.paths.push(inputPath)
+        config.pathToName[inputPath] = name
+        config.nameToPath[name] = inputPath
       }
     }
     else {
       console.warn(`  @bundles: invalid entry: ${JSON.stringify(entry)}`)
     }
   }
-
-  const pathToStatic = join(inventory._project.cwd, inventory.static?.folder || 'public')
-  config.outDir = join(pathToStatic, 'bundles')
 }
 
-async function build (entryFile, outfile) {
+async function build (entryPoints) {
   await esbuild({
-    entryPoints: [ entryFile ],
-    outfile,
+    entryPoints,
+    outdir: config.outDir,
     bundle: true,
     minify: true,
     sourcemap: true,
     format: 'esm',
     target: 'es2022',
     platform: 'browser',
+    outExtension: { '.js': '.mjs' }
     // external: [ 'fs', 'path' ],
   })
 
-  console.log(`  @bundles: built "${outfile.split('/bundles/')[1]}"`)
+  const entryNames = Object.keys(entryPoints)
+  const plural = entryNames.length > 1 ? 's' : ''
+
+  console.log(`  @bundles: built ${entryNames.length} file${plural}.`)
 }
 
 async function buildAll () {
   if (!config.outDir) { return }
 
-  for (const [ name, path ] of config.entries) {
-    await build(path, join(config.outDir, `${name}.mjs`))
-  }
+  await build(config.nameToPath)
 }
 
 module.exports = {
   sandbox: {
     async start ({ arc, inventory }) {
-      await readConfig(arc, inventory.inv)
+      await createConfig(arc, inventory.inv)
       await buildAll()
       console.log(`  @bundles: watching ${config.paths.length} files...`)
     },
     async watcher ({ filename: path, event }) {
       if (config.outDir
-          && config.entries.length > 0
           && event === 'update'
           && config.paths.includes(path)
       ){
-        await build(path, join(config.outDir, `${config.lookup[path]}.mjs`))
+        await build({ [config.pathToName[path]]: path })
       }
     }
   },
   deploy: {
     async start ({ arc, cloudformation, inventory }) {
-      await readConfig(arc, inventory.inv)
+      await createConfig(arc, inventory.inv)
       await buildAll()
       return cloudformation // always return cfn
     }
