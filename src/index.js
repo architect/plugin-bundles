@@ -68,6 +68,7 @@ async function build (entryPoints) {
     target: 'es2022',
     platform: 'browser',
     outExtension: { '.js': '.mjs' },
+    external: [ 'fs', 'path' ],
     ...config.esbuildConfig, // user config
     entryPoints, // do not allow entryPoints and outdir override
     outdir: config.outDir,
