@@ -88,8 +88,11 @@ module.exports = {
   sandbox: {
     async start ({ arc, inventory }) {
       await createConfig(arc, inventory.inv)
-      await buildAll()
-      console.log(`  @bundles: watching ${config.paths.length} files...`)
+
+      if (config.paths.length > 0){
+        await buildAll()
+        console.log(`  @bundles: watching ${config.paths.length} files...`)
+      }
     },
     async watcher ({ filename: path, event }) {
       if (config.outDir
@@ -104,7 +107,11 @@ module.exports = {
   deploy: {
     async start ({ arc, cloudformation, inventory }) {
       await createConfig(arc, inventory.inv)
-      await buildAll()
+
+      if (config.paths.length > 0){
+        await buildAll()
+      }
+
       return cloudformation // always return cfn
     }
   }
