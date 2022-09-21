@@ -130,9 +130,6 @@ module.exports = {
     async watcher ({ arc, event, filename: path, inventory: { inv } }) {
       const config = createConfig(arc, inv)
 
-      // TODO: remove this after fixing tests
-      console.log('watcher has fired with EVENT:', event)
-
       if (config && config.paths.includes(path)) {
         config.entryPoints = { [config.pathToName[path]]: path }
         const success = await build(config)
