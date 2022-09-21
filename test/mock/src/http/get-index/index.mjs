@@ -1,8 +1,7 @@
 import arc from '@architect/functions'
 
-export const handler = arc.http.async(async function(request) {
-  const file = request.query.filePath
-  const filePath = arc.static(file)
+async function http() {
+  return { html: '<h1>Teapot</h1>' }
+}
 
-  return { filePath }
-})
+export const handler = arc.http.async(http)
