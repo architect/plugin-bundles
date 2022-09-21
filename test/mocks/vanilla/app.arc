@@ -1,17 +1,14 @@
 @app
-bndl-mock
-
-@static
-fingerprint true
+vanilla-bundles
 
 @http
 get /
 
 @plugins
 architect/plugin-bundles
-  src ../../
+  src ../../../
 
 @bundles
 yolo /lib/yolo.mjs
 some-ts /lib/some.ts
-node-internals /lib/node-things.js
+styles /lib/styles.css
