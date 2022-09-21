@@ -127,7 +127,7 @@ module.exports = {
       }
     },
 
-    async watcher ({ arc, event, filename: path, inventory: { inv } }) {
+    async watcher ({ arc, filename: path, inventory: { inv } }) {
       const config = createConfig(arc, inv)
 
       if (config && config.paths.includes(path)) {
